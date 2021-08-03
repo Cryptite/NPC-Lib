@@ -6,8 +6,15 @@
 
   <groupId>com.github.juliarn</groupId>
   <artifactId>npc-lib</artifactId>
-  <version>2.6-RELEASE</version>
+  <version>2.7-RELEASE</version>
   <packaging>jar</packaging>
+
+    <distributionManagement>
+        <repository>
+            <id>com.lokamc</id>
+            <url>http://192.168.2.40:8090/releases</url>
+        </repository>
+    </distributionManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,18 +40,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.8.8-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.dmulloy2</groupId>
-      <artifactId>ProtocolLib</artifactId>
-      <version>master-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-buffer</artifactId>
       <version>4.1.65.Final</version>
@@ -65,8 +60,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>15</source>
+          <target>15</target>
         </configuration>
       </plugin>
       <plugin>
@@ -86,35 +81,6 @@
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.3.0</version>
-        <configuration>
-          <source>1.8</source>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
             </goals>
           </execution>
         </executions>
