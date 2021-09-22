@@ -184,6 +184,7 @@ public class NPC {
    */
   protected void removeSeeingPlayer(@NotNull Player player) {
     this.seeingPlayers.remove(player);
+    this.lookingAtPlayerLocations.remove(player);
   }
 
   /**
@@ -217,6 +218,7 @@ public class NPC {
     Preconditions.checkArgument(exclusive,
         "Don't use removeIncludedPlayer when NPC is not in exclusive mode");
     this.includedPlayers.remove(player);
+    this.lookingAtPlayerLocations.remove(player);
   }
 
   /**
@@ -247,6 +249,7 @@ public class NPC {
     Preconditions.checkArgument(!exclusive,
         "Don't use addExcludedPlayer when NPC is in exclusive mode");
     this.excludedPlayers.add(player);
+    this.lookingAtPlayerLocations.remove(player);
   }
 
   /**
