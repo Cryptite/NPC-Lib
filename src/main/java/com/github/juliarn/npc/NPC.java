@@ -15,6 +15,8 @@ import com.github.juliarn.npc.profile.Profile;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +34,7 @@ public class NPC {
   private final Collection<Player> seeingPlayers = new CopyOnWriteArraySet<>();
   private final Collection<Player> excludedPlayers = new CopyOnWriteArraySet<>();
   private final Collection<Player> includedPlayers = new CopyOnWriteArraySet<>();
+  private final Map<Player, Location> lookingAtPlayerLocations = new HashMap<>();
 
   private final Profile profile;
   private final int entityId;
@@ -156,6 +159,24 @@ public class NPC {
     return gameProfile;
   }
 
+  protected boolean updateLookAt(@NotNull Player player) {
+    Location lastLocation = lookingAtPlayerLocations.get(player);
+    if (lastLocation == null) {
+      lookingAtPlayerLocations.put(player, player.getLocation());
+      return true;
+    } else {
+      Location l = player.getLocation();
+      if (l.getX() != lastLocation.getX()
+          || l.getZ() != lastLocation.getZ()
+          || l.getY() != lastLocation.getY()) {
+        lookingAtPlayerLocations.put(player, l);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   /**
    * Removes this player from the players that can see the npc.
    *
@@ -182,7 +203,8 @@ public class NPC {
    * @param player the player to see the NPC
    */
   public void addIncludedPlayer(Player player) {
-    Preconditions.checkArgument(exclusive, "Don't use addIncludedPlayer when NPC is not in exclusive mode");
+    Preconditions.checkArgument(exclusive,
+        "Don't use addIncludedPlayer when NPC is not in exclusive mode");
     this.includedPlayers.add(player);
   }
 
@@ -192,7 +214,8 @@ public class NPC {
    * @param player the player to stop seeing the NPC
    */
   public void removeIncludedPlayer(Player player) {
-    Preconditions.checkArgument(exclusive, "Don't use removeIncludedPlayer when NPC is not in exclusive mode");
+    Preconditions.checkArgument(exclusive,
+        "Don't use removeIncludedPlayer when NPC is not in exclusive mode");
     this.includedPlayers.remove(player);
   }
 
@@ -200,7 +223,8 @@ public class NPC {
    * @return a modifiable collection of all players that can see this NPC
    */
   public Collection<Player> getIncludedPlayers() {
-    Preconditions.checkArgument(exclusive, "Don't use getIncludedPlayers when NPC is not in exclusive mode");
+    Preconditions.checkArgument(exclusive,
+        "Don't use getIncludedPlayers when NPC is not in exclusive mode");
     return this.includedPlayers;
   }
 
@@ -220,7 +244,8 @@ public class NPC {
    * @param player the player to be excluded
    */
   public void addExcludedPlayer(@NotNull Player player) {
-    Preconditions.checkArgument(!exclusive, "Don't use addExcludedPlayer when NPC is in exclusive mode");
+    Preconditions.checkArgument(!exclusive,
+        "Don't use addExcludedPlayer when NPC is in exclusive mode");
     this.excludedPlayers.add(player);
   }
 
@@ -230,7 +255,8 @@ public class NPC {
    * @param player the player to be included again
    */
   public void removeExcludedPlayer(@NotNull Player player) {
-    Preconditions.checkArgument(!exclusive, "Don't use removeExcludedPlayer when NPC is in exclusive mode");
+    Preconditions.checkArgument(!exclusive,
+        "Don't use removeExcludedPlayer when NPC is in exclusive mode");
     this.excludedPlayers.remove(player);
   }
 
@@ -243,7 +269,8 @@ public class NPC {
    */
   @NotNull
   public Collection<Player> getExcludedPlayers() {
-    Preconditions.checkArgument(!exclusive, "Don't use getExcludedPlayers when NPC is in exclusive mode");
+    Preconditions.checkArgument(!exclusive,
+        "Don't use getExcludedPlayers when NPC is in exclusive mode");
     return this.excludedPlayers;
   }
 
