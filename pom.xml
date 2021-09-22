@@ -6,13 +6,13 @@
 
   <groupId>com.github.juliarn</groupId>
   <artifactId>npc-lib</artifactId>
-  <version>2.7-RELEASE</version>
+  <version>2.7-SNAPSHOT</version>
   <packaging>jar</packaging>
 
     <distributionManagement>
         <repository>
             <id>com.lokamc</id>
-            <url>http://192.168.2.40:8090/releases</url>
+            <url>https://ysera.dyndns.org:444/releases</url>
         </repository>
     </distributionManagement>
 

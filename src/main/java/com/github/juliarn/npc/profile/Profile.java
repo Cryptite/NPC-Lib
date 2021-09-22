@@ -205,7 +205,7 @@ public class Profile implements Cloneable {
       if (connection.getResponseCode() == 200) {
         try (Reader reader = new InputStreamReader(connection.getInputStream(),
             StandardCharsets.UTF_8)) {
-          return JsonParser.parseReader(reader);
+          return new JsonParser().parse(reader);
         }
       }
       return null;
