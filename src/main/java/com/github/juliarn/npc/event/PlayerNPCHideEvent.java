@@ -2,15 +2,17 @@ package com.github.juliarn.npc.event;
 
 import com.github.juliarn.npc.NPC;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An event fired when a npc is hidden for a certain player.
  */
-public class PlayerNPCHideEvent extends PlayerNPCEvent {
+public class PlayerNPCHideEvent extends PlayerNPCEvent implements Cancellable {
 
   private static final HandlerList HANDLER_LIST = new HandlerList();
+  private boolean cancelled;
 
   /**
    * The reason why the npc was hidden.
@@ -54,6 +56,16 @@ public class PlayerNPCHideEvent extends PlayerNPCEvent {
   @Override
   public HandlerList getHandlers() {
     return HANDLER_LIST;
+  }
+
+  @Override
+  public boolean isCancelled() {
+    return cancelled;
+  }
+
+  @Override
+  public void setCancelled(boolean cancelled) {
+    this.cancelled = cancelled;
   }
 
   /**

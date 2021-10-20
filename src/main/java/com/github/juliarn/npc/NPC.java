@@ -130,15 +130,19 @@ public class NPC {
       @NotNull Player player,
       @NotNull Plugin plugin,
       @NotNull PlayerNPCHideEvent.Reason reason) {
-    new VisibilityModifier(this)
-        .queuePlayerListChange(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER)
-        .queueDestroy()
-        .send(player);
-
-    this.removeSeeingPlayer(player);
-
     Bukkit.getScheduler().runTask(plugin,
-        () -> Bukkit.getPluginManager().callEvent(new PlayerNPCHideEvent(player, this, reason)));
+        () -> {
+          PlayerNPCHideEvent event = new PlayerNPCHideEvent(player, this, reason);
+          Bukkit.getPluginManager().callEvent(event);
+          if (event.isCancelled()) return;
+
+          this.removeSeeingPlayer(player);
+          Bukkit.getScheduler().runTaskAsynchronously(plugin,
+              () -> new VisibilityModifier(this)
+              .queuePlayerListChange(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER)
+              .queueDestroy()
+              .send(player));
+        });
   }
 
   /**
