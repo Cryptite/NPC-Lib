@@ -181,6 +181,12 @@ public class NPC {
     return false;
   }
 
+  protected void removeLookingAt(@NotNull Player player) {
+    if (lookingAtPlayerLocations.remove(player) != null) {
+      rotation().queueRotate(location.getYaw(), location.getPitch()).send(player);
+    }
+  }
+
   /**
    * Removes this player from the players that can see the npc.
    *
@@ -406,6 +412,13 @@ public class NPC {
   @NotNull
   public Location getLocation() {
     return this.location;
+  }
+
+  /**
+   * @return if this npc is actively looking at the player.
+   */
+  public boolean isLookingAtPlayer(@NotNull Player player) {
+    return lookingAtPlayerLocations.containsKey(player);
   }
 
   /**

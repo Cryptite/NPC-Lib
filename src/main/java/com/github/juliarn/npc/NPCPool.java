@@ -208,11 +208,14 @@ public class NPCPool implements Listener {
             npc.show(player, this.plugin, this.tabListRemoveTicks);
           }
 
-          if (npc.isShownFor(player)
-              && npc.isLookAtPlayer()
-              && distance <= this.actionDistance
-              && npc.updateLookAt(player)) {
-            npc.rotation().queueLookAt(player.getLocation()).send(player);
+          if (npc.isShownFor(player) && npc.isLookAtPlayer()) {
+            if (distance <= this.actionDistance) {
+              if (npc.updateLookAt(player)) {
+                npc.rotation().queueLookAt(player.getLocation()).send(player);
+              }
+            } else if (npc.isLookingAtPlayer(player)) {
+              npc.removeLookingAt(player);
+            }
           }
         }
       }
