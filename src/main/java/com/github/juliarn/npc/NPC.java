@@ -109,8 +109,11 @@ public class NPC {
         // keeping the NPC longer in the player list, otherwise the skin might not be shown sometimes.
         Bukkit.getScheduler().runTaskLater(
             plugin,
-            () -> visibilityModifier
-                .queuePlayerListChange(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER).send(player),
+            () -> {
+              visibilityModifier
+                  .queuePlayerListChange(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER).send(player);
+              rotation().queueRotate(location.getYaw(), location.getPitch()).send(player);
+            },
             tabListRemoveTicks
         );
       }
