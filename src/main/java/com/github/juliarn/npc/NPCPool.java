@@ -15,7 +15,15 @@ import com.github.juliarn.npc.modifier.MetadataModifier;
 import com.github.juliarn.npc.modifier.NPCModifier;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,13 +37,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Represents the main management point for {@link NPC}s.
@@ -192,14 +193,22 @@ public class NPCPool implements Listener {
     Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
       for (Player player : ImmutableList.copyOf(Bukkit.getOnlinePlayers())) {
         for (NPC npc : this.npcMap.values()) {
-          if (!npc.getLocation().getWorld().equals(player.getLocation().getWorld())) {
+          Location npcLoc = npc.getLocation();
+          Location playerLoc = player.getLocation();
+          if (!npcLoc.getWorld().equals(playerLoc.getWorld())) {
             if (npc.isShownFor(player)) {
               npc.hide(player, this.plugin, PlayerNPCHideEvent.Reason.SPAWN_DISTANCE);
             }
             continue;
+          } else if (!npcLoc.getWorld()
+              .isChunkLoaded(npcLoc.getBlockX() >> 4, npcLoc.getBlockZ() >> 4)) {
+            if (npc.isShownFor(player)) {
+              npc.hide(player, this.plugin, PlayerNPCHideEvent.Reason.UNLOADED_CHUNK);
+            }
+            continue;
           }
 
-          double distance = npc.getLocation().distanceSquared(player.getLocation());
+          double distance = npcLoc.distanceSquared(playerLoc);
           boolean inRange = distance <= this.spawnDistance;
 
           if ((npc.isExcluded(player) || !inRange) && npc.isShownFor(player)) {

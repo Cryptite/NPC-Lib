@@ -1,15 +1,14 @@
 package com.github.juliarn.npc.modifier;
 
-import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.github.juliarn.npc.NPC;
+import java.util.Collections;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 /**
  * A modifier for modifying the equipment of a player.
@@ -78,21 +77,34 @@ public class EquipmentModifier extends NPCModifier {
   @NotNull
   public EquipmentModifier queue(
       @NotNull EnumWrappers.ItemSlot itemSlot,
-      @NotNull ItemStack equipment) {
-    PacketContainer packetContainer = super.newContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+      @NotNull ItemStack equipment
+  ) {
+    super.queueInstantly((targetNpc, target) -> {
+      PacketContainer container = new PacketContainer(Server.ENTITY_EQUIPMENT);
+      container.getIntegers().write(0, targetNpc.getEntityId());
 
-    if (MINECRAFT_VERSION < 16) {
-      if (MINECRAFT_VERSION < 9) {
-        packetContainer.getIntegers().write(1, itemSlot.ordinal());
+      if (MINECRAFT_VERSION < 16) {
+        if (MINECRAFT_VERSION < 9) {
+          // fix the item slot association for minecraft 1.8
+          int slotId = itemSlot.ordinal();
+          if (slotId > 0) {
+            // the main hand representation is 0, that didn't change - 1 was added as the representation
+            // of the off-hand so everything != 0 needs to be shifted one down to skip the unknown
+            // off-hand slot
+            slotId--;
+          }
+
+          container.getIntegers().write(1, slotId);
+        } else {
+          container.getItemSlots().write(0, itemSlot);
+        }
+        container.getItemModifier().write(0, equipment);
       } else {
-        packetContainer.getItemSlots().write(0, itemSlot);
+        container.getSlotStackPairLists()
+            .write(0, Collections.singletonList(new Pair<>(itemSlot, equipment)));
       }
-      packetContainer.getItemModifier().write(0, equipment);
-    } else {
-      packetContainer.getSlotStackPairLists()
-          .write(0, Collections.singletonList(new Pair<>(itemSlot, equipment)));
-    }
-
+      return container;
+    });
     return this;
   }
 
