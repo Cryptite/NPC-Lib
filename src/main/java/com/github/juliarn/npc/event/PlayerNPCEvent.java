@@ -22,7 +22,18 @@ public abstract class PlayerNPCEvent extends PlayerEvent {
    * @param npc The npc involved in this event
    */
   public PlayerNPCEvent(Player who, NPC npc) {
-    super(who);
+    this(who, npc, false);
+  }
+
+  /**
+   * Constructs a new event instance.
+   *
+   * @param who The player involved in this event
+   * @param npc The npc involved in this event
+   * @param async Whether this event can be async
+   */
+  public PlayerNPCEvent(Player who, NPC npc, boolean async) {
+    super(who, async);
     this.npc = npc;
   }
 

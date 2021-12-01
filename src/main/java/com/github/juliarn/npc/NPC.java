@@ -163,10 +163,6 @@ public class NPC {
         .queueDestroy()
         .send(player);
     this.removeSeeingPlayer(player);
-
-    Bukkit.getScheduler().runTask(
-        plugin,
-        () -> Bukkit.getPluginManager().callEvent(new PlayerNPCHideEvent(player, this, reason)));
   }
 
   protected boolean updateLookAt(@NotNull Player player) {
@@ -616,9 +612,9 @@ public class NPC {
           this.location,
           this.spawnCustomizer,
           pool.getFreeEntityId(),
+          this.lookAtPlayer,
           this.imitatePlayer,
           this.exclusive,
-          this.lookAtPlayer,
           this.usePlayerProfiles);
       pool.takeCareOf(npc);
 

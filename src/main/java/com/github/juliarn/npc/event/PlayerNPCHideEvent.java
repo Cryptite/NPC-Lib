@@ -27,7 +27,7 @@ public class PlayerNPCHideEvent extends PlayerNPCEvent implements Cancellable {
    * @param reason The reason why the npc was hidden
    */
   public PlayerNPCHideEvent(Player who, NPC npc, Reason reason) {
-    super(who, npc);
+    super(who, npc, true);
     this.reason = reason;
   }
 
