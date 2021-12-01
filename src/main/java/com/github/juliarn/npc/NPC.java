@@ -154,15 +154,17 @@ public class NPC {
       @NotNull Plugin plugin,
       @NotNull PlayerNPCHideEvent.Reason reason
   ) {
-    PlayerNPCHideEvent event = new PlayerNPCHideEvent(player, this, reason);
-    Bukkit.getPluginManager().callEvent(event);
-    if (event.isCancelled()) return;
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+      PlayerNPCHideEvent event = new PlayerNPCHideEvent(player, this, reason);
+      Bukkit.getPluginManager().callEvent(event);
+      if (event.isCancelled()) return;
 
-    this.visibility()
-        .queuePlayerListChange(PlayerInfoAction.REMOVE_PLAYER)
-        .queueDestroy()
-        .send(player);
-    this.removeSeeingPlayer(player);
+      this.visibility()
+          .queuePlayerListChange(PlayerInfoAction.REMOVE_PLAYER)
+          .queueDestroy()
+          .send(player);
+      this.removeSeeingPlayer(player);
+    });
   }
 
   protected boolean updateLookAt(@NotNull Player player) {
